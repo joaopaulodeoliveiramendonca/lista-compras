@@ -71,6 +71,8 @@ lista-compras/
 ### Subir serviços
 ```sh
 docker compose up -d --build
+docker compose start api   
+docker compose start web
 ```
 
 ### Verificar saúde
