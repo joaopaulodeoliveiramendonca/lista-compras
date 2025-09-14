@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5433:5432"             # no host usa 5433 para evitar conflito; dentro dos containers segue 5432
+      - "5433:5432" # host 5433 to avoid conflicts; inside containers it's 5432
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -40,6 +40,24 @@ services:
       sh -c "pnpm install &&
              pnpm prisma:generate &&
              pnpm dev"
+
+  web:
+    image: node:20-bookworm-slim
+    container_name: lista_compras_web
+    ports:
+      - "5173:5173"
+    working_dir: /app
+    volumes:
+      - ./web:/app
+    environment:
+      # o browser (seu Mac) vai falar direto com a API em localhost:3000
+      VITE_API_URL: http://localhost:3000
+    depends_on:
+      - api
+    command: >
+      bash -lc "corepack enable &&
+                corepack prepare pnpm@9.6.0 --activate &&
+                if [ ! -f package.json ]; then echo '>> web vazio, rode o passo 1 (scaffold)'; sleep 999999; else pnpm install && pnpm dev --host 0.0.0.0 --port 5173; fi"
 
 volumes:
   db_data:
