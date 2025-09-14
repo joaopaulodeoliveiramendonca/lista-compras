@@ -58,6 +58,16 @@ services:
       bash -lc "corepack enable &&
                 corepack prepare pnpm@9.6.0 --activate &&
                 if [ ! -f package.json ]; then echo '>> web vazio, rode o passo 1 (scaffold)'; sleep 999999; else pnpm install && pnpm dev --host 0.0.0.0 --port 5173; fi"
+  web-prod:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    image: lista-compras-web:prod
+    container_name: lista_compras_web_prod
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
 
 volumes:
   db_data:
