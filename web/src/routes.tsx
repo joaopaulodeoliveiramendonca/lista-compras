@@ -1,37 +1,42 @@
-import { createRootRoute, createRouter, createRoute } from "@tanstack/react-router";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Toaster } from "sonner";
-import ItemsPage from "./screens/ItemsPage";
+import { Link, createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/react-router";
+import ItemsPage from "@/screens/ItemsPage";
+import CategoriesPage from "@/screens/CategoriesPage";
+import React from "react";
+import "./index.css";
 
-const queryClient = new QueryClient();
-
-const Root = () => (
-  <QueryClientProvider client={queryClient}>
-    <div className="min-h-screen max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-semibold mb-4">Lista de Compras</h1>
-      <ItemsOutlet />
+// Layout raiz com menu
+function RootLayout() {
+  return (
+    <div className="mx-auto max-w-5xl space-y-6 p-6">
+      <header className="mb-4 flex gap-4">
+      <Link to="/" className="[&.active]:font-semibold">Itens</Link>
+      <Link to="/categorias" className="[&.active]:font-semibold">Categorias</Link>
+      </header>
+      <Outlet />
     </div>
-    <Toaster richColors />
-    <ReactQueryDevtools initialIsOpen={false} />
-  </QueryClientProvider>
-);
+  );
+}
 
-// Outlet simples para manter a estrutura
-const ItemsOutlet = () => <ItemsPage />;
-
-const rootRoute = createRootRoute({ component: Root });
+// ...
+const rootRoute = createRootRoute({ component: RootLayout })
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
   component: ItemsPage,
-});
+})
 
-const routeTree = rootRoute.addChildren([indexRoute]);
+const categoriesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/categorias",           // <— aqui em PT-BR
+  component: CategoriesPage,
+})
 
-export const router = createRouter({ routeTree });
+export const router = createRouter({
+  routeTree: rootRoute.addChildren([indexRoute, categoriesRoute]),
+})
 
+// Tipagem do TanStack Router
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;

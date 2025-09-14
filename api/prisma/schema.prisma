@@ -1,20 +1,33 @@
-// Define o provedor (PostgreSQL) e a conexão vem da variável DATABASE_URL
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// O client do Prisma será gerado aqui
-generator client {
-  provider = "prisma-client-js"
-}
-
-// Modelo base para a Lista de Compras
-model Item {
+model Category {
   id        String   @id @default(uuid())
-  name      String
-  quantity  Int      @default(1)
-  done      Boolean  @default(false)
+  name      String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  items     Item[]
+}
+
+model Item {
+  id         String    @id @default(uuid())
+  name       String
+  quantity   Int       @default(1)
+  done       Boolean   @default(false)
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([name])
+  @@index([done])
+  @@index([categoryId])
 }
