@@ -1,7 +1,7 @@
 # Lista de Compras
 
 Aplicação full-stack para gerenciar itens e categorias de compras.  
-Backend em **Fastify + Prisma + PostgreSQL** e frontend em **React (Vite) + TanStack Router/Query**.  
+Backend em **Fastify + Prisma + PostgreSQL** e frontend em **React (Vite) + TanStack Router/Query** usando **Docker**.  
 
 ---
 
